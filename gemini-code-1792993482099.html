@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Хэвлэлийн Зардлын Тооцоолуур</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --accent-green: #16a34a;
+      --accent-orange: #ea580c;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .calculator-card {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 580px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      color: #fff;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .header p {
+      font-size: 0.875rem;
+      color: #94a3b8;
+    }
+
+    .content {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .section-title-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .thumb-img {
+      width: 44px;
+      height: 32px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .thumb-img:hover {
+      transform: scale(1.08);
+      border-color: var(--primary);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .input-group label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrapper input {
+      width: 100%;
+      padding: 10px 36px 10px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .input-wrapper input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .input-unit {
+      position: absolute;
+      right: 12px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    /* Accordion Toggle Button */
+    .accordion-btn {
+      width: 100%;
+      background: #f1f5f9;
+      border: 1px solid var(--border-color);
+      padding: 12px 16px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-main);
+      transition: background-color 0.2s;
+    }
+
+    .accordion-btn:hover {
+      background: #e2e8f0;
+    }
+
+    .accordion-icon {
+      transition: transform 0.3s ease;
+      font-size: 0.8rem;
+    }
+
+    .accordion-btn.active .accordion-icon {
+      transform: rotate(180deg);
+    }
+
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out, padding 0.3s ease;
+      padding: 0 4px;
+    }
+
+    .accordion-content.open {
+      padding-top: 12px;
+      max-height: 500px;
+    }
+
+    .option-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .radio-card, .check-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.15s, border-color 0.15s;
+    }
+
+    .radio-card:hover, .check-card:hover {
+      background-color: #f8fafc;
+      border-color: #cbd5e1;
+    }
+
+    .radio-card input, .check-card input {
+      margin-right: 10px;
+      accent-color: var(--primary);
+      width: 16px;
+      height: 16px;
+    }
+
+    .option-label-wrap {
+      display: flex;
+      align-items: center;
+    }
+
+    .option-price {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .sub-option {
+      margin-left: 26px;
+      margin-top: -4px;
+      background: #fafafa;
+    }
+
+    .result-box {
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .result-row.highlight {
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+
+    .badge-plus {
+      background-color: #ffedd5;
+      color: var(--accent-orange);
+    }
+
+    .badge-minus {
+      background-color: #dcfce7;
+      color: var(--accent-green);
+    }
+
+    .total-row {
+      border-top: 2px dashed var(--border-color);
+      padding-top: 12px;
+      margin-top: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .total-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .total-amount {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .copy-btn {
+      width: 100%;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .copy-btn:hover {
+      background-color: var(--primary-hover);
+    }
+
+    /* Lightbox Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .modal img {
+      max-width: 90%;
+      max-height: 80%;
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="calculator-card">
+    <div class="header">
+      <h1>Хэвлэлийн Зардлын Тооцоолуур</h1>
+      <p>Үндсэн хэмжээ, материал болон нэмэлт үйлчилгээний бодолт</p>
+    </div>
+
+    <div class="content">
+      
+      <!-- 1. Хэмжээ ба Тоо ширхэг -->
+      <div>
+        <div class="section-title-wrap" style="margin-bottom: 12px;">
+          <div class="section-title">1. Хэмжээ ба Тоо ширхэг</div>
+          <!-- Зураг дээр дарахад томруулна -->
+          <img src="https://lh3.googleusercontent.com/d/1gC-U28Xk4k3284vV4Yw7uR04W0XjHnF5" alt="Тайлбар зураг" class="thumb-img" onclick="openModal(this.src)">
+        </div>
+        
+        <div class="grid-2">
+          <div class="input-group">
+            <label>Өндөр (см)</label>
+            <div class="input-wrapper">
+              <input type="number" id="height" value="190" min="0" oninput="calculateTotal()">
+              <span class="input-unit">см</span>
+            </div>
+          </div>
+          <div class="input-group">
+            <label>Урт (см)</label>
+            <div class="input-wrapper">
+              <input type="number" id="width" value="60" min="0" oninput="calculateTotal()">
+              <span class="input-unit">см</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="input-group" style="margin-top: 10px;">
+          <label>Захиалах тоо ширхэг</label>
+          <div class="input-wrapper">
+            <input type="number" id="quantity" value="1" min="1" oninput="calculateTotal()">
+            <span class="input-unit">ш</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Материал сонгох (Accordian) -->
+      <div>
+        <button type="button" class="accordion-btn" id="btn-mat" onclick="toggleAccordion('mat-content', 'btn-mat')">
+          <span>2. Материал сонгох</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-content" id="mat-content">
+          <div class="option-list">
+            <label class="radio-card">
+              <div class="option-label-wrap">
+                <input type="radio" name="material" value="20000" data-name="Хулдаас" onchange="calculateTotal()">
+                <span>Хулдаас</span>
+              </div>
+              <span class="option-price">20,000 ₮/м²</span>
+            </label>
+
+            <label class="radio-card">
+              <div class="option-label-wrap">
+                <input type="radio" name="material" value="50000" data-name="Фото, автостикер, слайд" checked onchange="calculateTotal()">
+                <span>Фото, автостикер, слайд</span>
+              </div>
+              <span class="option-price">50,000 ₮/м²</span>
+            </label>
+
+            <label class="radio-card">
+              <div class="option-label-wrap">
+                <input type="radio" name="material" value="80000" data-name="Хөөсөнцөр" id="mat-foam" onchange="calculateTotal()">
+                <span>Хөөсөнцөр</span>
+              </div>
+              <span class="option-price">80,000 ₮/м²</span>
+            </label>
+            
+            <!-- Хөөсөнцөрийн нэмэлт зүсэлт -->
+            <label class="check-card sub-option" id="foam-cut-wrap" style="display: none;">
+              <div class="option-label-wrap">
+                <input type="checkbox" id="foam-cut" onchange="calculateTotal()">
+                <span>+ Зүсэлт хийлгэх</span>
+              </div>
+              <span class="option-price">+40,000 ₮/м²</span>
+            </label>
+
+            <label class="radio-card">
+              <div class="option-label-wrap">
+                <input type="radio" name="material" value="150000" data-name="Соронз" onchange="calculateTotal()">
+                <span>Соронз</span>
+              </div>
+              <span class="option-price">150,000 ₮/м²</span>
+            </label>
+
+            <label class="radio-card">
+              <div class="option-label-wrap">
+                <input type="radio" name="material" value="200000" data-name="Гэрэлтдэг самбар" id="mat-light" onchange="calculateTotal()">
+                <span>Гэрэлтдэг самбар</span>
+              </div>
+              <span class="option-price">200,000 ₮/м²</span>
+            </label>
+
+            <!-- Гэрэлтдэг самбарын тогтоолт -->
+            <label class="check-card sub-option" id="light-mount-wrap" style="display: none;">
+              <div class="option-label-wrap">
+                <input type="checkbox" id="light-mount" onchange="calculateTotal()">
+                <span>+ Тогтоолт / Угсралт</span>
+              </div>
+              <span class="option-price">+30,000 ₮</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Нэмэлт сонголтууд (Accordian) -->
+      <div>
+        <button type="button" class="accordion-btn" id="btn-opt" onclick="toggleAccordion('opt-content', 'btn-opt')">
+          <span>3. Нэмэлт сонголтууд</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-content" id="opt-content">
+          <div class="option-list">
+            <div class="grid-2">
+              <div class="input-group">
+                <label>Бөгж (1ш = 2,000₮)</label>
+                <div class="input-wrapper">
+                  <input type="number" id="ring-qty" value="0" min="0" oninput="calculateTotal()">
+                  <span class="input-unit">ш</span>
+                </div>
+              </div>
+              <div class="input-group">
+                <label>ЭХ бэлтгэл (₮)</label>
+                <div class="input-wrapper">
+                  <input type="number" id="prep-cost" value="0" min="0" step="1000" oninput="calculateTotal()">
+                  <span class="input-unit">₮</span>
+                </div>
+              </div>
+            </div>
+            <div class="input-group" style="margin-top: 4px;">
+              <label>Хөөсний эмжээр (₮)</label>
+              <div class="input-wrapper">
+                <input type="number" id="border-cost" value="0" min="0" step="1000" oninput="calculateTotal()">
+                <span class="input-unit">₮</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Үр дүн хураангуй -->
+      <div class="result-box">
+        <div class="result-row">
+          <span>Нэгж талбай:</span>
+          <span id="res-area">0 м²</span>
+        </div>
+        <div class="result-row">
+          <span>Талбайн тарифын бодолт:</span>
+          <span id="res-rule-badge" class="badge">Стандарт</span>
+        </div>
+        <div class="result-row highlight">
+          <span>Материал зардалт (1ш):</span>
+          <span id="res-mat-cost">0 ₮</span>
+        </div>
+        <div class="result-row highlight">
+          <span>Нэмэлт үйлчилгээ (1ш):</span>
+          <span id="res-opt-cost">0 ₮</span>
+        </div>
+        
+        <div class="total-row">
+          <div>
+            <div class="total-title">Нийт төлөх дүн</div>
+            <div style="font-size:0.75rem; color: var(--text-muted);" id="res-qty-text">1 ширхэг захиалга</div>
+          </div>
+          <div class="total-amount" id="res-total">0 ₮</div>
+        </div>
+      </div>
+
+      <button class="copy-btn" onclick="copySummary()">Тооцооны мэдээллийг хуулах</button>
+
+    </div>
+  </div>
+
+  <!-- Modal for Lightbox -->
+  <div class="modal" id="imgModal" onclick="closeModal()">
+    <img id="modalImg" src="" alt="Томруулсан зураг">
+  </div>
+
+  <script>
+    function toggleAccordion(contentId, btnId) {
+      const content = document.getElementById(contentId);
+      const btn = document.getElementById(btnId);
+      content.classList.toggle('open');
+      btn.classList.toggle('active');
+    }
+
+    function openModal(src) {
+      document.getElementById('modalImg').src = src;
+      document.getElementById('imgModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('imgModal').style.display = 'none';
+    }
+
+    function calculateTotal() {
+      const h = parseFloat(document.getElementById('height').value) || 0;
+      const w = parseFloat(document.getElementById('width').value) || 0;
+      const qty = parseInt(document.getElementById('quantity').value) || 1;
+
+      // Талбай м²
+      const area = (h / 100) * (w / 100);
+      document.getElementById('res-area').innerText = area.toFixed(2) + ' м²';
+
+      // Сонгосон материал
+      const selectedMat = document.querySelector('input[name="material"]:checked');
+      let baseRate = parseFloat(selectedMat.value);
+      
+      // Хөөсөнцөр зүсэлтийн дэд сонголт
+      const foamWrap = document.getElementById('foam-cut-wrap');
+      const isFoam = document.getElementById('mat-foam').checked;
+      foamWrap.style.display = isFoam ? 'flex' : 'none';
+      if (isFoam && document.getElementById('foam-cut').checked) {
+        baseRate += 40000;
+      }
+
+      // Гэрэлтдэг самбар угсралтын дэд сонголт
+      const lightWrap = document.getElementById('light-mount-wrap');
+      const isLight = document.getElementById('mat-light').checked;
+      lightWrap.style.display = isLight ? 'flex' : 'none';
+      let lightMountCost = 0;
+      if (isLight && document.getElementById('light-mount').checked) {
+        lightMountCost = 30000;
+      }
+
+      // Талбайн дүрэм бодолт (<1м² +20%, >1м² -10%)
+      let rateMultiplier = 1;
+      const badge = document.getElementById('res-rule-badge');
+
+      if (area > 0 && area < 1) {
+        rateMultiplier = 1.2;
+        badge.innerText = "1м²-аас бага (+20%)";
+        badge.className = "badge badge-plus";
+      } else if (area > 1) {
+        rateMultiplier = 0.9;
+        badge.innerText = "1м²-аас их (-10%)";
+        badge.className = "badge badge-minus";
+      } else {
+        badge.innerText = "Стандарт (1м²)";
+        badge.className = "badge";
+      }
+
+      // Материалын зардалт (1ш)
+      const matCostPerPiece = area * baseRate * rateMultiplier;
+
+      // Нэмэлт үйлчилгээ
+      const ringQty = parseInt(document.getElementById('ring-qty').value) || 0;
+      const prepCost = parseFloat(document.getElementById('prep-cost').value) || 0;
+      const borderCost = parseFloat(document.getElementById('border-cost').value) || 0;
+      
+      const optionsCostPerPiece = (ringQty * 2000) + prepCost + borderCost + lightMountCost;
+
+      // Нийт дүнг бодох
+      const totalOnePiece = matCostPerPiece + optionsCostPerPiece;
+      const grandTotal = totalOnePiece * qty;
+
+      // Дэлгэцэнд харуулах
+      document.getElementById('res-mat-cost').innerText = Math.round(matCostPerPiece).toLocaleString() + ' ₮';
+      document.getElementById('res-opt-cost').innerText = Math.round(optionsCostPerPiece).toLocaleString() + ' ₮';
+      document.getElementById('res-total').innerText = Math.round(grandTotal).toLocaleString() + ' ₮';
+      document.getElementById('res-qty-text').innerText = `${qty} ширхэг захиалга`;
+    }
+
+    function copySummary() {
+      const h = document.getElementById('height').value;
+      const w = document.getElementById('width').value;
+      const qty = document.getElementById('quantity').value;
+      const area = document.getElementById('res-area').innerText;
+      const matName = document.querySelector('input[name="material"]:checked').getAttribute('data-name');
+      const total = document.getElementById('res-total').innerText;
+
+      const summaryText = `--- ХЭВЛЭЛИЙН БОДОЛТ ---\n` +
+        `• Хэмжээ: ${h}см x ${w}см (${area})\n` +
+        `• Тоо ширхэг: ${qty} ш\n` +
+        `• Материал: ${matName}\n` +
+        `• НИЙТ ДҮН: ${total}\n` +
+        `-------------------------`;
+
+      navigator.clipboard.writeText(summaryText).then(() => {
+        alert('Тооцооны мэдээллийг хуулж авлаа!');
+      });
+    }
+
+    // Анхны бодолт ажиллуулах
+    calculateTotal();
+  </script>
+</body>
+</html>
